@@ -1,7 +1,9 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Library {
     public static void main(String[] args) {
@@ -40,8 +42,10 @@ public class Library {
                         librarian.addBook();
                     } else if (response == 2) {
                         librarian.removeBook();
-                    }else if (response == 3){
+                    } else if (response == 3) {
                         librarian.addMember();
+                    }else if (response ==4){
+                        librarian.removeMember();
                     }else if(response==6) {
                         librarian.listBooks();
                     }else if (response == 7) {
@@ -136,7 +140,27 @@ public class Library {
 
             Member newMember = new Member(name, age, phoneNumber);
             members.add(newMember);
-            System.out.println("Member Successfully Registered with <Member ID>!");
+            System.out.println("Member Successfully Registered with Member ID: " + newMember.getMemberID());
+        }
+
+        public void removeMember() {
+            Scanner scan = new Scanner(System.in);
+            System.out.print("Enter the Member ID to remove: ");
+            int memberIDToRemove = scan.nextInt();
+            Member memberToRemove = null;
+            for (Member member : members) {
+                if (member.getMemberID() == memberIDToRemove) {
+                    memberToRemove = member;
+                    break;
+                }
+            }
+            if (memberToRemove != null) {
+                Member.markMemberIDAvailable(memberToRemove.getMemberID());
+                members.remove(memberToRemove);
+                System.out.println("Member removed successfully!");
+            } else {
+                System.out.println("Member not found with the provided ID.");
+            }
         }
 
         // Other methods to add and remove members/books
@@ -150,12 +174,31 @@ public class Library {
         private long phoneNumber;
         private int memberID;
         private int balance;
+
+        private static int nextMemberID = 1; // Static variable to keep track of member IDs
+
         private ArrayList<Book> borrowed_books = new ArrayList<Book>();
 
-        public Member(String name, int age, long PhoneNumber){
+        private static Set<Integer> availableMemberIDs = new HashSet<>(); // Set to store available member IDs
+
+        public Member(String name, int age, long phoneNumber) {
             this.name = name;
             this.age = age;
             this.phoneNumber = phoneNumber;
+
+            if (availableMemberIDs.isEmpty()) {
+                memberID = nextMemberID++;
+            } else {
+                memberID = availableMemberIDs.iterator().next();
+                availableMemberIDs.remove(memberID);
+            }
+        }
+
+        public static void markMemberIDAvailable(int memberID) {
+            availableMemberIDs.add(memberID);
+        }
+        public int getMemberID(){
+            return memberID;
         }
     }
 
