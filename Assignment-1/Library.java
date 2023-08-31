@@ -60,6 +60,7 @@ public class Library {
                 modeSelection:
                 while (true) {
                     System.out.println("\nLogin to View Options");
+                    System.out.println("______________________________");
                     System.out.print("Enter your Name: ");
                     mem_name = scan.next();
                     System.out.print("Enter your Phone Number: ");
@@ -69,7 +70,30 @@ public class Library {
                         int ind = librarian.member_name.indexOf(mem_name);
                         System.out.println("==============================");
                         System.out.println("Welcome "+mem_name+"!\nYour Member ID is : "+librarian.member_id.get(ind));
-                        System.out.println("==============================");
+                        System.out.println("==============================\n");
+                        while (true){
+                            System.out.println("1) List Available Books");
+                            System.out.println("2) List My Books");
+                            System.out.println("3) Issue book");
+                            System.out.println("4) Return book");
+                            System.out.println("5) Pay Fine");
+                            System.out.println("6) Back");
+                            response = scan.nextInt();
+
+                            if (response == 1){
+                                librarian.listBooks();
+                            }
+                            else if(response == 2){
+
+                            }else if(response == 3){
+                                librarian.listBooks();
+
+                            }
+                            else if (response == 6){
+                                break;                        //back thing not good!!!!!!!!!!!
+                            }
+                        }
+
                     }
                     else{
                         System.out.println("Member with Name: "+mem_name+" and Phone No: "+Ph_No+" doesn't exist.");
@@ -89,10 +113,10 @@ public class Library {
     static class Librarian {
         private ArrayList<Member> members = new ArrayList<Member>();
         private ArrayList<Book> books = new ArrayList<Book>();
-
         private ArrayList<String> member_name = new ArrayList<String>();
         private ArrayList<Long> member_ph = new ArrayList<Long>();
         private ArrayList<Integer> member_id = new ArrayList<>();
+
 
 
         public void addBook() {
@@ -259,6 +283,12 @@ public class Library {
             this.totalCopies = totalCopies;
             this.availableCopies = availableCopies;
         }
+
+//        public void issuedBook(int id, String title, String author){
+//            this.bookID = id;
+//            this.title = title;
+//            this.author = author;
+//        }
 
         public int getBookID() {
             return bookID;
