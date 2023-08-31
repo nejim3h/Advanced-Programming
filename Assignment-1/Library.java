@@ -95,8 +95,16 @@ public class Library {
                                     System.out.println("==============================");
                                 }
                             } else if (response == 3) {
+                                librarian.listBooks();
                                 librarian.issueBook();
                             } else if (response == 4) {
+                                System.out.println("List of your borrowed books:");
+                                for (Book book : librarian.issuedBooks) {
+                                    System.out.println("==============================");
+                                    System.out.println("Book ID: " + book.getBookID());
+                                    System.out.println("Title: " + book.getTitle());
+                                    System.out.println("==============================");
+                                }
                                 librarian.returnBook();
                             } else if (response == 5) {
                                 // ... (existing code)
