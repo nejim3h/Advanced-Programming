@@ -6,6 +6,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Library {
+    private static Member member;
+
     public static void main(String[] args) {
         System.out.println("Library Portal Initialized…");
         System.out.println("\n========================================================");
@@ -80,17 +82,26 @@ public class Library {
                             System.out.println("6) Back");
                             response = scan.nextInt();
 
-                            if (response == 1){
-                                librarian.listBooks();
-                            }
-                            else if(response == 2){
 
-                            }else if(response == 3){
+                            if (response == 1) {
                                 librarian.listBooks();
-
-                            }
-                            else if (response == 6){
-                                break;                        //back thing not good!!!!!!!!!!!
+                            } else if (response == 2) {
+                                // Add code to list borrowed books for the member
+                                System.out.println("List of your borrowed books:");
+                                for (Book book : librarian.issuedBooks) {
+                                    System.out.println("==============================");
+                                    System.out.println("Book ID: " + book.getBookID());
+                                    System.out.println("Title: " + book.getTitle());
+                                    System.out.println("==============================");
+                                }
+                            } else if (response == 3) {
+                                librarian.issueBook();
+                            } else if (response == 4) {
+                                librarian.returnBook();
+                            } else if (response == 5) {
+                                // ... (existing code)
+                            } else if (response == 6) {
+                                break;
                             }
                         }
 
@@ -110,12 +121,18 @@ public class Library {
         }
     }
 
+    public static void setMember(Member member) {
+        Library.member = member;
+    }
+
     static class Librarian {
         private ArrayList<Member> members = new ArrayList<Member>();
         private ArrayList<Book> books = new ArrayList<Book>();
         private ArrayList<String> member_name = new ArrayList<String>();
         private ArrayList<Long> member_ph = new ArrayList<Long>();
         private ArrayList<Integer> member_id = new ArrayList<>();
+        private ArrayList<Book> issuedBooks = new ArrayList<>();
+        private ArrayList<Book> returnedBooks = new ArrayList<>();
 
 
 
@@ -219,6 +236,41 @@ public class Library {
                 System.out.println("==============================");
             }
         }
+        // Add these methods to the Librarian class
+
+        public void issueBook() {
+            Scanner scan = new Scanner(System.in);
+            System.out.print("Enter the Book ID to issue: ");
+            int bookIDToIssue = scan.nextInt();
+
+            for (Book book : books) {
+                if (book.getBookID() == bookIDToIssue && book.getAvailableCopies() > 0) {
+                    book.availableCopies--;
+                    issuedBooks.add(book); // Add book to issuedBooks ArrayList
+                    System.out.println("Book issued successfully!");
+                    return;
+                }
+            }
+            System.out.println("Book not found or no available copies.");
+        }
+
+        public void returnBook() {
+            Scanner scan = new Scanner(System.in);
+            System.out.print("Enter the Book ID to return: ");
+            int bookIDToReturn = scan.nextInt();
+
+            for (Book book : issuedBooks) {
+                if (book.getBookID() == bookIDToReturn) {
+                    book.availableCopies++;
+                    returnedBooks.add(book); // Add book to returnedBooks ArrayList
+                    issuedBooks.remove(book); // Remove book from issuedBooks ArrayList
+                    System.out.println("Book returned successfully!");
+                    return;
+                }
+            }
+            System.out.println("Book not found in issued books.");
+        }
+
 
 
         // Other methods to add and remove members/books
@@ -284,12 +336,6 @@ public class Library {
             this.availableCopies = availableCopies;
         }
 
-//        public void issuedBook(int id, String title, String author){
-//            this.bookID = id;
-//            this.title = title;
-//            this.author = author;
-//        }
-
         public int getBookID() {
             return bookID;
         }
@@ -299,9 +345,18 @@ public class Library {
         public String getAuthor() {
             return author;
         }
+        public int incrementedAvailableCopies() {
+            return availableCopies++;
+        }
+
+        public int decrementAvailableCopies() {
+            return availableCopies--;
+        }
+
         public int getAvailableCopies() {
             return availableCopies;
         }
+
         // Other methods and getters/setters
     }
 }
