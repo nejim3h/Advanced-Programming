@@ -16,7 +16,7 @@ public class Library {
         Scanner scan = new Scanner(System.in);
         int response;
         String mem_name;
-        int Ph_No;
+        long Ph_No;
 
         Librarian librarian = new Librarian(); // Create a librarian object
 
@@ -46,6 +46,8 @@ public class Library {
                         librarian.addMember();
                     }else if (response ==4){
                         librarian.removeMember();
+                    }else if (response == 5) {
+                        librarian.listMembers();
                     }else if(response==6) {
                         librarian.listBooks();
                     }else if (response == 7) {
@@ -60,10 +62,20 @@ public class Library {
                     System.out.println("\nLogin to View Options");
                     System.out.print("Enter your Name: ");
                     mem_name = scan.next();
-                    System.out.println();
                     System.out.print("Enter your Phone Number: ");
-                    Ph_No = scan.nextInt();
+                    Ph_No = scan.nextLong();
                     System.out.println();
+                    if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))){
+                        int ind = librarian.member_name.indexOf(mem_name);
+                        System.out.println("==============================");
+                        System.out.println("Welcome "+mem_name+"!\nYour Member ID is : "+librarian.member_id.get(ind));
+                        System.out.println("==============================");
+                    }
+                    else{
+                        System.out.println("Member with Name: "+mem_name+" and Phone No: "+Ph_No+" doesn't exist.");
+                        System.out.println("Complete Registration to login\n");
+                        break;
+                    }
                 }
             } else {
                 System.out.println("==============================");
@@ -77,6 +89,11 @@ public class Library {
     static class Librarian {
         private ArrayList<Member> members = new ArrayList<Member>();
         private ArrayList<Book> books = new ArrayList<Book>();
+
+        private ArrayList<String> member_name = new ArrayList<String>();
+        private ArrayList<Long> member_ph = new ArrayList<Long>();
+        private ArrayList<Integer> member_id = new ArrayList<>();
+
 
         public void addBook() {
             Scanner scan = new Scanner(System.in);
@@ -141,6 +158,10 @@ public class Library {
             Member newMember = new Member(name, age, phoneNumber);
             members.add(newMember);
             System.out.println("Member Successfully Registered with Member ID: " + newMember.getMemberID());
+            member_id.add(newMember.getMemberID());
+            member_name.add(name);
+            member_ph.add(phoneNumber);
+
         }
 
         public void removeMember() {
@@ -162,6 +183,19 @@ public class Library {
                 System.out.println("Member not found with the provided ID.");
             }
         }
+
+        public void listMembers() {
+            System.out.println("List of registered members:");
+            for (Member member : members) {
+                System.out.println("==============================");
+                System.out.println("Name: " + member.getName());
+                System.out.println("Age: " + member.getAge());
+                System.out.println("Phone Number: " + member.getPhoneNumber());
+                System.out.println("Member ID: " + member.getMemberID());
+                System.out.println("==============================");
+            }
+        }
+
 
         // Other methods to add and remove members/books
         // Methods to issue, return books and calculate fines
@@ -199,6 +233,15 @@ public class Library {
         }
         public int getMemberID(){
             return memberID;
+        }
+        public String getName(){
+            return name;
+        }
+        public int getAge(){
+            return age;
+        }
+        public long getPhoneNumber(){
+            return phoneNumber;
         }
     }
 
