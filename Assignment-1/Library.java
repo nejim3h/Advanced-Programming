@@ -1,5 +1,6 @@
 package org.example;
 
+import java.time.LocalTime;
 import java.util.*;
 
 public class Library {
@@ -12,11 +13,13 @@ public class Library {
         System.out.println("               Welcome to the Library Portal             ");
         System.out.println("========================================================\n");
 
+        LocalTime currentTime = LocalTime.now();
+
         Scanner scan = new Scanner(System.in);
         int response;
         String mem_name;
         long Ph_No;
-
+        long T1 = 0; long T2 = 0; int fees = 0;
         Librarian librarian = new Librarian(); // Create a librarian object
 
         while (true) {
@@ -87,6 +90,8 @@ public class Library {
                             } else if (response == 3) {
                                 librarian.listBooks();
                                 librarian.issueBook(librarian.member_id.get(ind));
+                                long timeStart = System.currentTimeMillis();
+                                T1 = timeStart / 1000;
                             } else if (response == 4) {
                                 System.out.println("List of your borrowed books:");
                                 for (Book book : librarian.issuedBooks) {
@@ -96,8 +101,11 @@ public class Library {
                                     System.out.println("==============================");
                                 }
                                 librarian.returnBook(librarian.member_id.get(ind));
+                                long timeEnd = System.currentTimeMillis();
+                                T2 = timeEnd / 1000;
+                                fees =  FEES(T1,T2);
                             } else if (response == 5) {
-                                // ... (existing code)
+                                System.out.println("You had a total fine of Rs. "+fees+". It has been paid successfully!");
                             } else if (response == 6) {
                                 break;
                             }
@@ -123,6 +131,10 @@ public class Library {
         Library.member = member;
     }
 
+    public static int FEES(long T1, long T2){
+        int fees = 3*((int)Math.abs(T1-T2)-10);
+        return fees;
+    }
     static class Librarian {
         private ArrayList<Member> members = new ArrayList<Member>();
         private ArrayList<Book> books = new ArrayList<Book>();
@@ -142,7 +154,7 @@ public class Library {
             for (Book existingBook : books) {
                 if (existingBook.getBookID() == bookID) {
                     System.out.println("A book with the same Book ID already exists.");
-                    return; 
+                    return;
                 }
             }
             System.out.print("Title: ");
