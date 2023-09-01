@@ -139,6 +139,12 @@ public class Library {
             System.out.println("Enter book details:");
             System.out.print("Book ID: ");
             int bookID = scan.nextInt();
+            for (Book existingBook : books) {
+                if (existingBook.getBookID() == bookID) {
+                    System.out.println("A book with the same Book ID already exists.");
+                    return; 
+                }
+            }
             System.out.print("Title: ");
             String title = scan.next();
             System.out.print("Author: ");
@@ -150,6 +156,7 @@ public class Library {
             books.add(newBook);
             System.out.println("Book added successfully!");
         }
+
 
         public void removeBook() {
             Scanner scan = new Scanner(System.in);
@@ -269,7 +276,7 @@ public class Library {
 
         public void returnBook(int memberID) {
             if (!borrowedBooksByMember.containsKey(memberID)) {
-                System.out.println("No books borrowed by this member.");
+                System.out.println("Member has not borrowed any books.");
                 return;
             }
 
@@ -277,29 +284,29 @@ public class Library {
             System.out.print("Enter the Book ID to return: ");
             int bookIDToReturn = scan.nextInt();
 
-            ArrayList<Book> borrowedBooks = borrowedBooksByMember.get(memberID);
-            Book bookToRemove = null;
-
-            for (Book book : borrowedBooks) {
+            for (Book book : borrowedBooksByMember.get(memberID)) {
                 if (book.getBookID() == bookIDToReturn) {
-                    if (book.getAvailableCopies() == 1) {
-                        bookToRemove = book;
-                    } else if (book.getAvailableCopies() > 1) {
-                        book.decrementAvailableCopies();
+                    book.incrementAvailableCopies();
+                    // Assuming you have a condition to check if a book should be added back
+                    if (shouldAddBookBack(book)) {
+                        books.add(book);
                     }
+                    borrowedBooksByMember.get(memberID).remove(book);
+                    System.out.println("Book returned successfully!");
+                    return;
                 }
             }
-            
-
-            if (bookToRemove != null) {
-                borrowedBooks.remove(bookToRemove);
+            System.out.println("Book not found in the member's borrowed books.");
+        }
+        private boolean shouldAddBookBack(Book returnedBook) {
+            // Check if the book is already in the books list
+            for (Book book : books) {
+                if (book.getBookID() == returnedBook.getBookID()) {
+                    return false; // Book is already in the list, don't add it back
+                }
             }
-
-            if (bookToRemove != null || bookIDToReturn == 0) {
-                System.out.println("Book returned successfully!");
-            } else {
-                System.out.println("Book not found in borrowed books.");
-            }
+            returnedBook.setAvailableCopies(1);
+            return true; // Book is not in the list, add it back
         }
 
 
@@ -414,6 +421,9 @@ public class Library {
 
         public int getAvailableCopies() {
             return availableCopies;
+        }
+        public void setAvailableCopies(int availableCopies) {
+            this.availableCopies = availableCopies;
         }
 
         // Other methods and getters/setters
