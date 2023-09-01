@@ -253,8 +253,13 @@ public class Library {
 
             for (Book book : books) {
                 if (book.getBookID() == bookIDToIssue) {
+                    if (book.getAvailableCopies() > 1) {
+                        book.decrementAvailableCopies();
+                    } else {
+                        books.remove(book);
+                    }
+
                     borrowedBooksByMember.get(memberID).add(book);
-                    books.remove(book);
                     System.out.println("Book issued successfully!");
                     return;
                 }
@@ -273,16 +278,30 @@ public class Library {
             int bookIDToReturn = scan.nextInt();
 
             ArrayList<Book> borrowedBooks = borrowedBooksByMember.get(memberID);
+            Book bookToRemove = null;
+
             for (Book book : borrowedBooks) {
                 if (book.getBookID() == bookIDToReturn) {
-                    borrowedBooks.remove(book);
-                    books.add(book);
-                    System.out.println("Book returned successfully!");
-                    return;
+                    if (book.getAvailableCopies() == 1) {
+                        bookToRemove = book;
+                    } else if (book.getAvailableCopies() > 1) {
+                        book.decrementAvailableCopies();
+                    }
                 }
             }
-            System.out.println("Book not found in borrowed books.");
+            
+
+            if (bookToRemove != null) {
+                borrowedBooks.remove(bookToRemove);
+            }
+
+            if (bookToRemove != null || bookIDToReturn == 0) {
+                System.out.println("Book returned successfully!");
+            } else {
+                System.out.println("Book not found in borrowed books.");
+            }
         }
+
 
         public void printIssuedBooksByMember(int memberID) {
             if (!borrowedBooksByMember.containsKey(memberID)) {
@@ -388,6 +407,9 @@ public class Library {
 
         public int decrementAvailableCopies() {
             return availableCopies--;
+        }
+        public int incrementAvailableCopies(){
+            return availableCopies++;
         }
 
         public int getAvailableCopies() {
