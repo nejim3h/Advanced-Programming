@@ -1,9 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Library {
     private static Member member;
@@ -86,17 +83,10 @@ public class Library {
                             if (response == 1) {
                                 librarian.listBooks();
                             } else if (response == 2) {
-                                // Add code to list borrowed books for the member
-                                System.out.println("List of your borrowed books:");
-                                for (Book book : librarian.issuedBooks) {
-                                    System.out.println("==============================");
-                                    System.out.println("Book ID: " + book.getBookID());
-                                    System.out.println("Title: " + book.getTitle());
-                                    System.out.println("==============================");
-                                }
+                                librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
                             } else if (response == 3) {
                                 librarian.listBooks();
-                                librarian.issueBook();
+                                librarian.issueBook(librarian.member_id.get(ind));
                             } else if (response == 4) {
                                 System.out.println("List of your borrowed books:");
                                 for (Book book : librarian.issuedBooks) {
@@ -105,7 +95,7 @@ public class Library {
                                     System.out.println("Title: " + book.getTitle());
                                     System.out.println("==============================");
                                 }
-                                librarian.returnBook();
+                                librarian.returnBook(librarian.member_id.get(ind));
                             } else if (response == 5) {
                                 // ... (existing code)
                             } else if (response == 6) {
@@ -141,7 +131,7 @@ public class Library {
         private ArrayList<Integer> member_id = new ArrayList<>();
         private ArrayList<Book> issuedBooks = new ArrayList<>();
         private ArrayList<Book> returnedBooks = new ArrayList<>();
-
+        private HashMap<Integer, ArrayList<Book>> borrowedBooksByMember = new HashMap<>();
 
 
         public void addBook() {
@@ -246,38 +236,77 @@ public class Library {
         }
         // Add these methods to the Librarian class
 
-        public void issueBook() {
+
+        public void issueBook(int memberID) {
+            if (!borrowedBooksByMember.containsKey(memberID)) {
+                borrowedBooksByMember.put(memberID, new ArrayList<>());
+            }
+
+            if (borrowedBooksByMember.get(memberID).size() >= 2) {
+                System.out.println("Maximum limit of 2 books reached for this member.");
+                return;
+            }
+
             Scanner scan = new Scanner(System.in);
             System.out.print("Enter the Book ID to issue: ");
             int bookIDToIssue = scan.nextInt();
 
             for (Book book : books) {
-                if (book.getBookID() == bookIDToIssue && book.getAvailableCopies() > 0) {
-                    book.availableCopies--;
-                    issuedBooks.add(book); // Add book to issuedBooks ArrayList
+                if (book.getBookID() == bookIDToIssue) {
+                    borrowedBooksByMember.get(memberID).add(book);
+                    books.remove(book);
                     System.out.println("Book issued successfully!");
                     return;
                 }
             }
-            System.out.println("Book not found or no available copies.");
+            System.out.println("Book not found or not available.");
         }
 
-        public void returnBook() {
+        public void returnBook(int memberID) {
+            if (!borrowedBooksByMember.containsKey(memberID)) {
+                System.out.println("No books borrowed by this member.");
+                return;
+            }
+
             Scanner scan = new Scanner(System.in);
             System.out.print("Enter the Book ID to return: ");
             int bookIDToReturn = scan.nextInt();
 
-            for (Book book : issuedBooks) {
+            ArrayList<Book> borrowedBooks = borrowedBooksByMember.get(memberID);
+            for (Book book : borrowedBooks) {
                 if (book.getBookID() == bookIDToReturn) {
-                    book.availableCopies++;
-                    returnedBooks.add(book); // Add book to returnedBooks ArrayList
-                    issuedBooks.remove(book); // Remove book from issuedBooks ArrayList
+                    borrowedBooks.remove(book);
+                    books.add(book);
                     System.out.println("Book returned successfully!");
                     return;
                 }
             }
-            System.out.println("Book not found in issued books.");
+            System.out.println("Book not found in borrowed books.");
         }
+
+        public void printIssuedBooksByMember(int memberID) {
+            if (!borrowedBooksByMember.containsKey(memberID)) {
+                System.out.println("No books borrowed by this member.");
+                return;
+            }
+
+            ArrayList<Book> borrowedBooks = borrowedBooksByMember.get(memberID);
+
+            if (borrowedBooks.isEmpty()) {
+                System.out.println("No books borrowed by this member.");
+                return;
+            }
+
+            System.out.println("Issued Books for Member ID: " + memberID);
+            System.out.println("==============================");
+
+            for (Book book : borrowedBooks) {
+                System.out.println("Book ID: " + book.getBookID());
+                System.out.println("Title: " + book.getTitle());
+                System.out.println("==============================");
+            }
+        }
+
 
 
 
