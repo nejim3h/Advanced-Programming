@@ -185,7 +185,6 @@ public class Library {
         private ArrayList<Book> returnedBooks = new ArrayList<>();
         private HashMap<Integer, ArrayList<Book>> borrowedBooksByMember = new HashMap<>();
 
-
         public void addBook() {
             Scanner scan = new Scanner(System.in);
             System.out.println("Enter book details:");
@@ -195,7 +194,7 @@ public class Library {
                 try {
                     System.out.print("Assign Book ID (Integer Number): ");
                     bookID = scan.nextInt();
-                    if (bookID < 0) {
+                    if (bookID <= 0) {
                         System.out.println("Please enter a positive integer for Book ID.");
                         continue;
                     }
@@ -211,17 +210,22 @@ public class Library {
                     return;
                 }
             }
+
+            // Consume the newline character left in the input buffer
+            scan.nextLine();
+
             System.out.print("Title: ");
-            String title = scan.next();
+            String title = scan.nextLine(); // Use nextLine() to allow spaces in the title
 
             System.out.print("Author: ");
-            String author = scan.next();
+            String author = scan.nextLine();
+
             int totalCopies;
             while (true) {
                 try {
                     System.out.print("Total Copies: ");
                     totalCopies = scan.nextInt();
-                    if (totalCopies < 0) {
+                    if (totalCopies <= 0) {
                         System.out.println("Please enter a positive integer for Total Copies.");
                         continue;
                     }
@@ -235,7 +239,6 @@ public class Library {
             books.add(newBook);
             System.out.println("Book added successfully!");
         }
-
 
         public void removeBook() {
             Scanner scan = new Scanner(System.in);
@@ -336,7 +339,7 @@ public class Library {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        
+
         public void removeMember() {
             Scanner scan = new Scanner(System.in);
 
