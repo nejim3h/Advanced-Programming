@@ -73,45 +73,18 @@ public class Library {
             } else if (response == 2) {
                 modeSelection:
                 while (true) {
-                    System.out.println("\nLogin to View Options or Press 1 to go Back");
-                    try {
-                        response = scan.nextInt();
-                    } catch (InputMismatchException e) {
-                        System.out.println("Invalid input. Please try again.");
-                        scan.next(); // Clear the invalid input
-                        continue;
-                    }
+                    System.out.println("\nLogin to View Options");
                     System.out.println("______________________________");
-                    if (response == 1) {
-                        break;
-                    } else {
-
-                        System.out.print("Enter your Name: ");
-                        mem_name = scan.next();
-
-                        if (isAlpha(mem_name)) {
-                            break;
-                        } else {
-                            System.out.println("Invalid name. Name should only contain alphabetic characters.");
-                        }
-
-                        try {
-                            System.out.print("Enter your Phone Number: ");
-                            Ph_No = scan.nextLong();
-                            if (Ph_No < 0) {
-                                System.out.println("Please enter a valid phone number.");
-                                continue;
-                            }
-                        } catch (InputMismatchException e) {
-                            System.out.println("Invalid input. Please enter a valid phone number.");
-                            scan.next();
-                            continue;
-                        }
-                        if ((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))) {
-                            int ind = librarian.member_name.indexOf(mem_name);
-                            System.out.println("==============================");
-                            System.out.println("Welcome " + mem_name + "!\nYour Member ID is : " + librarian.member_id.get(ind));
-                            System.out.println("==============================\n");
+                    System.out.print("Enter your Name: ");
+                    mem_name = scan.next();
+                    System.out.print("Enter your Phone Number: ");
+                    Ph_No = scan.nextLong();
+                    System.out.println();
+                    if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))){
+                        int ind = librarian.member_name.indexOf(mem_name);
+                        System.out.println("==============================");
+                        System.out.println("Welcome "+mem_name+"!\nYour Member ID is : "+librarian.member_id.get(ind));
+                        System.out.println("==============================\n");
                             while (true) {
                                 System.out.println("1) List Available Books");
                                 System.out.println("2) List My Books");
@@ -175,7 +148,7 @@ public class Library {
                             System.out.println("Complete Registration to login\n");
                             break;
                         }
-                    }
+
                 }
             } else if (response == 3) {
                 System.out.println("==============================");
@@ -198,8 +171,9 @@ public class Library {
         return fees;
     }
     public static boolean isAlpha(String str) {
-        return str != null && str.chars().allMatch(Character::isLetter);
+        return str != null && str.replaceAll(" ", "").chars().allMatch(Character::isLetter);
     }
+
 
     static class Librarian {
         private ArrayList<Member> members = new ArrayList<Member>();
@@ -291,74 +265,96 @@ public class Library {
         }
 
         public void listBooks() {
-            System.out.println("List of available books:");
-            for (Book book : books) {
-                System.out.println("==============================");
-                System.out.println("Book ID: " + book.getBookID());
-                System.out.println("Title: " + book.getTitle());
-                System.out.println("Author: " + book.getAuthor());
-                System.out.println("Available Copies: " + book.getAvailableCopies());
-                System.out.println("==============================");
+            if (books.isEmpty()){
+                System.out.println("No books are available!");
+            }
+            else{
+                System.out.println("List of available books:");
+                for (Book book : books) {
+                    System.out.println("==============================");
+                    System.out.println("Book ID: " + book.getBookID());
+                    System.out.println("Title: " + book.getTitle());
+                    System.out.println("Author: " + book.getAuthor());
+                    System.out.println("Available Copies: " + book.getAvailableCopies());
+                    System.out.println("==============================");
+                }
             }
         }
+
 
         public void addMember() {
             Scanner scan = new Scanner(System.in);
             System.out.println("Enter Details:");
 
-            System.out.print("Name: ");
-            String name = scan.nextLine().trim();
+            try {
+                System.out.print("Name: ");
+                String name = scan.nextLine(); // Use nextLine to allow spaces in the name
 
-            int age;
-            while (true) {
-                try {
+                if (!name.matches("^[a-zA-Z\\s]+$")) {
+                    throw new IllegalArgumentException("Enter a valid name");
+                }
+
+                int age;
+                while (true) {
                     System.out.print("Age: ");
-                    age = scan.nextInt();
-                    if (age <= 0) {
-                        System.out.println("Please enter a positive age.");
-                        continue;
+                    if (scan.hasNextInt()) {
+                        age = scan.nextInt();
+                        if (age > 0) {
+                            break; // Valid age, exit the loop
+                        } else {
+                            System.out.println("Age should be a positive number.");
+                        }
+                    } else {
+                        System.out.println("Age should be a numeric value.");
+                        scan.next(); // Clear invalid input
                     }
-                    break; // Exit the loop if input is valid
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a valid age as a positive integer.");
-                    scan.next(); // Clear the invalid input
                 }
-            }
-            long phoneNumber;
-            while (true) {
-                try {
+
+                long phoneNumber;
+                while (true) {
                     System.out.print("Phone Number: ");
-                    phoneNumber = scan.nextLong();
-                    if (phoneNumber < 0) {
-                        System.out.println("Please enter a valid phone number.");
-                        continue;
+                    if (scan.hasNextLong()) {
+                        phoneNumber = scan.nextLong();
+                        if (phoneNumber > 0) {
+                            break; // Valid phone number, exit the loop
+                        } else {
+                            System.out.println("Phone number should be a positive number.");
+                        }
+                    } else {
+                        System.out.println("Phone number should be a numeric value.");
+                        scan.next(); // Clear invalid input
                     }
-                    break; // Exit the loop if input is valid
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a valid phone number.");
-                    scan.next(); // Clear the invalid input
                 }
+
+                Member newMember = new Member(name, age, phoneNumber);
+                members.add(newMember);
+                System.out.println("Member Successfully Registered with Member ID: " + newMember.getMemberID());
+                member_id.add(newMember.getMemberID());
+                member_name.add(name);
+                member_ph.add(phoneNumber);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
             }
-
-            Member newMember = new Member(name, age, phoneNumber);
-            members.add(newMember);
-            System.out.println("Member Successfully Registered with Member ID: " + newMember.getMemberID());
         }
-
+        
         public void removeMember() {
             Scanner scan = new Scanner(System.in);
-            System.out.print("Enter the Member ID to remove: ");
 
             int memberIDToRemove;
+
             while (true) {
-                try {
+                System.out.print("Enter the Member ID to remove: ");
+                if (scan.hasNextInt()) {
                     memberIDToRemove = scan.nextInt();
-                    break; // Exit the loop if input is valid
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a valid integer for Member ID.");
-                    scan.next(); // Clear the invalid input
+                    if (memberIDToRemove > 0) {
+                        break; // Valid member ID, exit the loop
+                    }
                 }
+
+                System.out.println("Invalid input. Please enter a valid positive Member ID.");
+                scan.nextLine(); // Clear the input buffer
             }
+
             Member memberToRemove = null;
             for (Member member : members) {
                 if (member.getMemberID() == memberIDToRemove) {
@@ -366,6 +362,7 @@ public class Library {
                     break;
                 }
             }
+
             if (memberToRemove != null) {
                 Member.markMemberIDAvailable(memberToRemove.getMemberID());
                 members.remove(memberToRemove);
@@ -375,15 +372,21 @@ public class Library {
             }
         }
 
+
         public void listMembers() {
-            System.out.println("List of registered members:");
-            for (Member member : members) {
-                System.out.println("==============================");
-                System.out.println("Name: " + member.getName());
-                System.out.println("Age: " + member.getAge());
-                System.out.println("Phone Number: " + member.getPhoneNumber());
-                System.out.println("Member ID: " + member.getMemberID());
-                System.out.println("==============================");
+            if (members.isEmpty()){
+                System.out.println("No members are registered yet!");
+            }
+            else {
+                System.out.println("List of registered members:");
+                for (Member member : members) {
+                    System.out.println("==============================");
+                    System.out.println("Name: " + member.getName());
+                    System.out.println("Age: " + member.getAge());
+                    System.out.println("Phone Number: " + member.getPhoneNumber());
+                    System.out.println("Member ID: " + member.getMemberID());
+                    System.out.println("==============================");
+                }
             }
         }
 
