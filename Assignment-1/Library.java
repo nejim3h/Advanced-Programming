@@ -158,8 +158,8 @@ public class Library {
                                     fees = FEES(T1, T2);
                                     if (fees == 0) {
                                         break;
-                                    } else {
-                                        System.out.println("Fine of Rs." + fees + " has been charged for a delay of " + ((int) Math.abs(T1 - T2) - 10));
+                                    } else if(fees>0) {
+                                        System.out.println("Fine of Rs." + fees + " has been charged for a delay of " + ((int) Math.abs((T1 - T2) - 10)));
                                     }
                                 } else if (response == 5) {
                                     if (fees == 0) {
@@ -199,7 +199,13 @@ public class Library {
     }
 
     public static int FEES(long T1, long T2){
-        int fees = 3*((int)Math.abs(T1-T2)-10);
+        int fees;
+        if (Math.abs(T1-T2)>=10) {
+            fees = 3 * Math.abs(((int) (Math.abs(T1 - T2)) - 10));
+        }
+        else{
+            fees = 0;
+        }
         return fees;
     }
     public static boolean isAlpha(String str) {
