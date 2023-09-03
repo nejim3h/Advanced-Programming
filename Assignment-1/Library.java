@@ -108,71 +108,101 @@ public class Library {
                     }
 
                     // You can also add additional validation for the phone number, if needed
-                    if (Ph_No < 1000000000 || Ph_No > 9999999999L) {
+                    if (Ph_No <= 1000000000 || Ph_No >= 9999999999L) {
                         System.out.println("Invalid phone number format. Please enter a 10-digit number.");
                         continue; // Restart the loop
                     }
 
-                    if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))){
+                    if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))) {
                         int ind = librarian.member_name.indexOf(mem_name);
                         System.out.println("==============================");
-                        System.out.println("Welcome "+mem_name+"!\nYour Member ID is : "+librarian.member_id.get(ind));
+                        System.out.println("Welcome " + mem_name + "!\nYour Member ID is : " + librarian.member_id.get(ind));
                         System.out.println("==============================\n");
-                            while (true) {
-                                System.out.println("1) List Available Books");
-                                System.out.println("2) List My Books");
-                                System.out.println("3) Issue book");
-                                System.out.println("4) Return book");
-                                System.out.println("5) Pay Fine");
-                                System.out.println("6) Back");
-                                try {
-                                    response = scan.nextInt();
-                                } catch (InputMismatchException e) {
-                                    System.out.println("Invalid input. Please try again.");
-                                    scan.next(); // Clear the invalid input
-                                    continue;
-                                }
-                                if (response == 1) {
+                        while (true) {
+                            System.out.println("1) List Available Books");
+                            System.out.println("2) List My Books");
+                            System.out.println("3) Issue book");
+                            System.out.println("4) Return book");
+                            System.out.println("5) Pay Fine");
+                            System.out.println("6) Back");
+                            try {
+                                response = scan.nextInt();
+                            } catch (InputMismatchException e) {
+                                System.out.println("Invalid input. Please try again.");
+                                scan.next(); // Clear the invalid input
+                                continue;
+                            }
+                            if (response == 1) {
+                                librarian.listBooks();
+                            } else if (response == 2) {
+                                librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
+                            } else if (response == 3) {
+                                if (fees == 0) {
                                     librarian.listBooks();
-                                } else if (response == 2) {
-                                    librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
-                                } else if (response == 3) {
-                                    if (fees == 0) {
-                                        librarian.listBooks();
-                                        librarian.issueBook(librarian.member_id.get(ind));
-                                        long timeStart = System.currentTimeMillis();
-                                        T1 = timeStart / 1000;
-                                    } else {
-                                        System.out.println("Kindly pay the fine to proceed!");
-                                    }
-                                } else if (response == 4) {
-                                    int fine=0;
-                                    System.out.println("List of your borrowed books:");
-                                    librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
+                                    librarian.issueBook(librarian.member_id.get(ind));
+                                    long timeStart = System.currentTimeMillis();
+                                    T1 = timeStart / 1000;
+                                } else {
+                                    System.out.println("Kindly pay the fine to proceed!");
+                                }
+                            }
 
-                                    long timeEnd = System.currentTimeMillis();
-                                    T2 = timeEnd / 1000;
-                                    int timeDifference = (int) Math.abs((T2 - T1));
-                                    if (timeDifference >= 10) {
-                                        fine = 3 * (timeDifference - 10);
-                                    } else {
-                                        fine = 0;
-                                    }
-                                    fees = fine;
-                                    if (fees == 0) {
-                                        librarian.returnBook(librarian.member_id.get(ind));
-                                    } else if (fees > 0) {
-                                        librarian.returnBook(librarian.member_id.get(ind));
+                            else if (response == 4) {
+                                int fine = 0; // Initialize fine to zero
 
-                                        System.out.println("Fine of Rs." + fees + " has been charged for a delay of " + ((int) Math.abs(Math.abs(T1 - T2) - 10)));
+                                System.out.println("List of your borrowed books:");
+                                librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
+
+                                librarian.returnBook(librarian.member_id.get(ind));
+                                System.out.println("Book returned successfully.");
+
+                                long timeEnd = System.currentTimeMillis();
+                                T2 = timeEnd / 1000;
+                                int timeDifference = (int) Math.abs((T2 - T1));
+
+                                if (timeDifference >= 10) {
+                                    fine = 3 * (timeDifference - 10);
+                                } else {
+                                    fine = 0;
+                                }
+
+                                int index_ = librarian.member_ph.indexOf(Ph_No);
+
+                                if (index_ >= 0) {
+                                    // Check if index_ is valid before accessing or modifying memberFines
+                                    if (index_ >= librarian.memberFines.size()) {
+                                        // Expand the memberFines ArrayList to accommodate the index
+                                        while (index_ >= librarian.memberFines.size()) {
+                                            librarian.memberFines.add(0); // You can initialize with 0 or any other value
+                                        }
                                     }
-                                } else if (response == 5) {
-                                    if (fees == 0) {
-                                        System.out.println("You don't have any due fine!");
-                                    } else {
-                                        System.out.println("You had a total fine of Rs. " + fees + ". It has been paid successfully!");
-                                        fees=0;
+
+                                    librarian.memberFines.set(index_, fine);
+                                    fees = librarian.memberFines.get(index_);
+
+                                    if (fees > 0) {
+                                        System.out.println("You have a fine of Rs." + fees);
+                                        System.out.println("Please pay the fine to return the book.");
+                                        // Optionally, you can provide a way for the user to pay the fine here.
                                     }
+                                } else {
+                                    System.out.println("Ph_No " + Ph_No + " not found in member_ph.");
+                                }
+                            }
+
+
+
+
+                            else if (response == 5) {
+                                if (fees == 0) {
+                                    System.out.println("You don't have any due fine!");
+                                } else {
+                                    System.out.println("You had a total fine of Rs. " + fees + ". It has been paid successfully!");
+                                    int index_ = librarian.member_ph.indexOf(Ph_No);
+                                    librarian.memberFines.set(index_, 0); // Reset the fine to zero
+                                    }
+
+
                                 } else if (response == 6) {
                                     break;
                                 } else {
@@ -227,6 +257,7 @@ public class Library {
         private ArrayList<Integer> member_id = new ArrayList<>();
         private ArrayList<Book> issuedBooks = new ArrayList<>();
         private ArrayList<Book> returnedBooks = new ArrayList<>();
+        private ArrayList<Integer> memberFines = new ArrayList<>();
         private HashMap<Integer, ArrayList<Book>> borrowedBooksByMember = new HashMap<>();
 
         public void addBook() {
@@ -526,31 +557,37 @@ public class Library {
         }
 
         public void displayMembersWithBooksAndFines() {
-            if (members.isEmpty()){
+            if (members.isEmpty()) {
                 System.out.println("No members found.");
-            }
-            else {
-                for (Member member : members) {
-                    System.out.println("Member ID: " + member.getMemberID());
-                    System.out.println("Member Name: " + member.getName());
-                    System.out.println("Member Phone Number: " + member.getPhoneNumber());
+            } else {
+                System.out.println("Member Fines:");
+                for (int i = 0; i < members.size(); i++) {
+                    Member member = members.get(i);
+                    Integer fine = i < memberFines.size() ? memberFines.get(i) : null;
+
+                    System.out.println("Member ID: " + (member.getMemberID()));
+                    System.out.println("Member Name: " + (member.getName()));
+                    System.out.println("Member Phone Number: " + (member.getPhoneNumber()));
 
                     // Display books borrowed by the member
                     System.out.println("Books Borrowed:");
-                    for (Book book : borrowedBooksByMember.get(member.getMemberID())) {
-                        System.out.println("  Book ID: " + book.getBookID());
-                        System.out.println("  Title: " + book.getTitle());
+                    List<Book> borrowedBooks = borrowedBooksByMember.get(member.getMemberID());
+                    if (borrowedBooks != null) {
+                        for (Book book : borrowedBooks) {
+                            int bookID = book.getBookID();
+                            System.out.println("  Book ID: " + (bookID != -1 ? bookID : "None"));
+                            System.out.println("  Title: " + (book.getTitle() != null ? book.getTitle() : "None"));
+                        }
+                    } else {
+                        System.out.println("  None"); // No borrowed books
                     }
 
-                    // Display fine
-                    System.out.println("Fine to be Paid: Rs." + member.getFine());
+                    System.out.println("Fine to be Paid: Rs." + (fine != null ? fine : "0"));
                     System.out.println("==============================");
                 }
             }
         }
-
-
-
+        
         public void printIssuedBooksByMember(int memberID) {
             if (!borrowedBooksByMember.containsKey(memberID)) {
                 System.out.println("No books borrowed by this member.");
