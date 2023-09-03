@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Library {
     private static Member member;
+    private ArrayList<Member> members;
 
     public static void main(String[] args) {
         System.out.println("Library Portal Initialized…");
@@ -58,7 +59,7 @@ public class Library {
                     }else if (response ==4){
                         librarian.removeMember();
                     }else if (response == 5) {
-                        librarian.listMembers();
+                        librarian.displayMembersWithBooksAndFines();
                     }else if(response==6) {
                         librarian.listBooks();
                     }else if (response == 7) {
@@ -145,28 +146,32 @@ public class Library {
                                         System.out.println("Kindly pay the fine to proceed!");
                                     }
                                 } else if (response == 4) {
+                                    int fine=0;
                                     System.out.println("List of your borrowed books:");
-                                    for (Book book : librarian.issuedBooks) {
-                                        System.out.println("==============================");
-                                        System.out.println("Book ID: " + book.getBookID());
-                                        System.out.println("Title: " + book.getTitle());
-                                        System.out.println("==============================");
-                                    }
-                                    librarian.returnBook(librarian.member_id.get(ind));
+                                    librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
+
                                     long timeEnd = System.currentTimeMillis();
                                     T2 = timeEnd / 1000;
-                                    fees = FEES(T1, T2);
+                                    int timeDifference = (int) Math.abs((T2 - T1));
+                                    if (timeDifference >= 10) {
+                                        fine = 3 * (timeDifference - 10);
+                                    } else {
+                                        fine = 0;
+                                    }
+                                    fees = fine;
                                     if (fees == 0) {
-                                        break;
-                                    } else if(fees>0) {
-                                        System.out.println("Fine of Rs." + fees + " has been charged for a delay of " + ((int) Math.abs((T1 - T2) - 10)));
+                                        librarian.returnBook(librarian.member_id.get(ind));
+                                    } else if (fees > 0) {
+                                        librarian.returnBook(librarian.member_id.get(ind));
+
+                                        System.out.println("Fine of Rs." + fees + " has been charged for a delay of " + ((int) Math.abs(Math.abs(T1 - T2) - 10)));
                                     }
                                 } else if (response == 5) {
                                     if (fees == 0) {
                                         System.out.println("You don't have any due fine!");
                                     } else {
                                         System.out.println("You had a total fine of Rs. " + fees + ". It has been paid successfully!");
-                                        fees = 0;
+                                        fees=0;
                                     }
                                 } else if (response == 6) {
                                     break;
@@ -214,6 +219,7 @@ public class Library {
 
 
     static class Librarian {
+
         private ArrayList<Member> members = new ArrayList<Member>();
         private ArrayList<Book> books = new ArrayList<Book>();
         private ArrayList<String> member_name = new ArrayList<String>();
@@ -519,6 +525,31 @@ public class Library {
             return true; // Book is not in the list, add it back
         }
 
+        public void displayMembersWithBooksAndFines() {
+            if (members.isEmpty()){
+                System.out.println("No members found.");
+            }
+            else {
+                for (Member member : members) {
+                    System.out.println("Member ID: " + member.getMemberID());
+                    System.out.println("Member Name: " + member.getName());
+                    System.out.println("Member Phone Number: " + member.getPhoneNumber());
+
+                    // Display books borrowed by the member
+                    System.out.println("Books Borrowed:");
+                    for (Book book : borrowedBooksByMember.get(member.getMemberID())) {
+                        System.out.println("  Book ID: " + book.getBookID());
+                        System.out.println("  Title: " + book.getTitle());
+                    }
+
+                    // Display fine
+                    System.out.println("Fine to be Paid: Rs." + member.getFine());
+                    System.out.println("==============================");
+                }
+            }
+        }
+
+
 
         public void printIssuedBooksByMember(int memberID) {
             if (!borrowedBooksByMember.containsKey(memberID)) {
@@ -556,7 +587,7 @@ public class Library {
         private int age;
         private long phoneNumber;
         private int memberID;
-        private int balance;
+        private int fine;
 
         private static int nextMemberID = 1; // Static variable to keep track of member IDs
 
@@ -568,6 +599,7 @@ public class Library {
             this.name = name;
             this.age = age;
             this.phoneNumber = phoneNumber;
+            this.fine = 0;
 
             if (availableMemberIDs.isEmpty()) {
                 memberID = nextMemberID++;
@@ -576,6 +608,19 @@ public class Library {
                 availableMemberIDs.remove(memberID);
             }
         }
+
+        public void borrowBook(Book book) {
+            borrowed_books.add(book);
+        }
+
+        public void returnBook(Book book) {
+            borrowed_books.remove(book);
+        }
+
+        public void payFine() {
+            fine = 0;
+        }
+
 
         public static void markMemberIDAvailable(int memberID) {
             availableMemberIDs.add(memberID);
@@ -591,6 +636,9 @@ public class Library {
         }
         public long getPhoneNumber(){
             return phoneNumber;
+        }
+        public int getFine(){
+            return fine;
         }
     }
 
