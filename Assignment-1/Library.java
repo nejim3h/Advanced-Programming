@@ -28,7 +28,7 @@ public class Library {
                 response = scan.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please try again.");
-                scan.next(); // Clear the invalid input
+                scan.next(); 
                 continue;
             }
             if (response == 1) {
@@ -46,7 +46,7 @@ public class Library {
                         response = scan.nextInt();
                     } catch (InputMismatchException e) {
                         System.out.println("Invalid input. Please try again.");
-                        scan.next(); // Clear the invalid input
+                        scan.next(); 
                         continue;
                     }
 
@@ -81,36 +81,31 @@ public class Library {
 
                     if (choice.equalsIgnoreCase("E")) {
                         System.out.println();
-                        break; // Exit the loop and end the program
+                        break; 
                     }
 
-                    // Prompt the user for name
                     System.out.print("Enter your Name: ");
                     mem_name = scan.next();
-                    scan.nextLine(); // Consume the newline character
+                    scan.nextLine(); 
 
-                    // Validate the name input
                     if (!isAlpha(mem_name)) {
                         System.out.println("Invalid name. Please enter alphabetic characters only.");
-                        continue; // Restart the loop
+                        continue;
                     }
 
-                    // Prompt the user for phone number
                     System.out.print("Enter your Phone Number: ");
 
-                    // Handle potential input errors for the phone number
                     try {
                         Ph_No = scan.nextLong();
                     } catch (java.util.InputMismatchException e) {
                         System.out.println("Invalid phone number. Please enter a valid number.");
-                        scan.nextLine(); // Clear the scanner buffer to avoid an infinite loop
-                        continue; // Restart the loop
+                        scan.nextLine(); 
+                        continue; 
                     }
 
-                    // You can also add additional validation for the phone number, if needed
                     if (Ph_No <= 1000000000 || Ph_No >= 9999999999L) {
                         System.out.println("Invalid phone number format. Please enter a 10-digit number.");
-                        continue; // Restart the loop
+                        continue; 
                     }
 
                     if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))) {
@@ -129,7 +124,7 @@ public class Library {
                                 response = scan.nextInt();
                             } catch (InputMismatchException e) {
                                 System.out.println("Invalid input. Please try again.");
-                                scan.next(); // Clear the invalid input
+                                scan.next(); 
                                 continue;
                             }
                             if (response == 1) {
@@ -148,62 +143,62 @@ public class Library {
                             }
 
                             else if (response == 4) {
-                                int fine = 0; // Initialize fine to zero
+                                int fine = 0; 
 
                                 System.out.println("List of your borrowed books:");
                                 librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
 
                                 librarian.returnBook(librarian.member_id.get(ind));
                                 System.out.println("Book returned successfully.");
+                                if (librarian.presence(librarian.member_id.get((ind)))) {
+                                    long timeEnd = System.currentTimeMillis();
+                                    T2 = timeEnd / 1000;
+                                    int timeDifference = (int) Math.abs((T2 - T1));
 
-                                long timeEnd = System.currentTimeMillis();
-                                T2 = timeEnd / 1000;
-                                int timeDifference = (int) Math.abs((T2 - T1));
-
-                                if (timeDifference >= 10) {
-                                    fine = 3 * (timeDifference - 10);
-                                } else {
-                                    fine = 0;
+                                    if (timeDifference >= 10) {
+                                        fine = 3 * (timeDifference - 10);
+                                    } else {
+                                        fine = 0;
+                                    }
                                 }
 
                                 int index_ = librarian.member_ph.indexOf(Ph_No);
 
                                 if (index_ >= 0) {
-                                    // Check if index_ is valid before accessing or modifying memberFines
                                     if (index_ >= librarian.memberFines.size()) {
-                                        // Expand the memberFines ArrayList to accommodate the index
                                         while (index_ >= librarian.memberFines.size()) {
-                                            librarian.memberFines.add(0); // You can initialize with 0 or any other value
+                                            librarian.memberFines.add(0); 
                                         }
                                     }
-
                                     librarian.memberFines.set(index_, fine);
                                     fees = librarian.memberFines.get(index_);
 
                                     if (fees > 0) {
                                         System.out.println("You have a fine of Rs." + fees);
                                         System.out.println("Please pay the fine to return the book.");
-                                        // Optionally, you can provide a way for the user to pay the fine here.
                                     }
                                 } else {
                                     System.out.println("Ph_No " + Ph_No + " not found in member_ph.");
                                 }
                             }
-
-
-
-
+                            
                             else if (response == 5) {
                                 if (fees == 0) {
                                     System.out.println("You don't have any due fine!");
                                 } else {
                                     System.out.println("You had a total fine of Rs. " + fees + ". It has been paid successfully!");
+
                                     int index_ = librarian.member_ph.indexOf(Ph_No);
-                                    librarian.memberFines.set(index_, 0); // Reset the fine to zero
+
+                                    if (index_ >= 0) {
+                                        librarian.memberFines.set(index_, 0);
+                                        fees = 0;
+                                    } else {
+                                        System.out.println("Ph_No " + Ph_No + " not found in member_ph.");
                                     }
+                                }
 
-
-                                } else if (response == 6) {
+                        } else if (response == 6) {
                                     break;
                                 } else {
                                     System.out.println("Enter a valid option!");
@@ -273,10 +268,10 @@ public class Library {
                         System.out.println("Please enter a positive integer for Book ID.");
                         continue;
                     }
-                    break; // Exit the loop if input is valid
+                    break; 
                 } catch (InputMismatchException e) {
                     System.out.println("Invalid input. Please enter a valid integer for Book ID.");
-                    scan.next(); // Clear the invalid input
+                    scan.next();
                 }
             }
             for (Book existingBook : books) {
@@ -286,11 +281,10 @@ public class Library {
                 }
             }
 
-            // Consume the newline character left in the input buffer
             scan.nextLine();
 
             System.out.print("Title: ");
-            String title = scan.nextLine(); // Use nextLine() to allow spaces in the title
+            String title = scan.nextLine(); 
 
             System.out.print("Author: ");
             String author = scan.nextLine();
@@ -309,10 +303,10 @@ public class Library {
                         System.out.println("Please enter a positive integer for Total Copies.");
                         continue;
                     }
-                    break; // Exit the loop if input is valid
+                    break; 
                 } catch (InputMismatchException e) {
                     System.out.println("Invalid input. Please enter a valid integer for Total Copies.");
-                    scan.next(); // Clear the invalid input
+                    scan.next(); 
                 }
             }
             Book newBook = new Book(bookID, title, author, totalCopies, totalCopies);
@@ -363,15 +357,14 @@ public class Library {
                 }
             }
         }
-
-
+        
         public void addMember() {
             Scanner scan = new Scanner(System.in);
             System.out.println("Enter Details:");
 
             try {
                 System.out.print("Name: ");
-                String name = scan.nextLine(); // Use nextLine to allow spaces in the name
+                String name = scan.nextLine(); 
 
                 if (!name.matches("^[a-zA-Z\\s]+$")) {
                     throw new IllegalArgumentException("Enter a valid name");
@@ -383,13 +376,13 @@ public class Library {
                     if (scan.hasNextInt()) {
                         age = scan.nextInt();
                         if (age > 0) {
-                            break; // Valid age, exit the loop
+                            break; 
                         } else {
                             System.out.println("Age should be a positive number.");
                         }
                     } else {
                         System.out.println("Age should be a numeric value.");
-                        scan.next(); // Clear invalid input
+                        scan.next(); 
                     }
                 }
 
@@ -399,13 +392,13 @@ public class Library {
                     if (scan.hasNextLong()) {
                         phoneNumber = scan.nextLong();
                         if (phoneNumber > 1000000000 && phoneNumber < 9999999999L) {
-                            break; // Valid phone number, exit the loop
+                            break; 
                         } else {
                             System.out.println("Enter a 10 digit phone number.");
                         }
                     } else {
                         System.out.println("Phone number should be a numeric value.");
-                        scan.next(); // Clear invalid input
+                        scan.next(); 
                     }
                 }
 
@@ -430,12 +423,12 @@ public class Library {
                 if (scan.hasNextInt()) {
                     memberIDToRemove = scan.nextInt();
                     if (memberIDToRemove > 0) {
-                        break; // Valid member ID, exit the loop
+                        break; 
                     }
                 }
 
                 System.out.println("Invalid input. Please enter a valid positive Member ID.");
-                scan.nextLine(); // Clear the input buffer
+                scan.nextLine(); 
             }
 
             Member memberToRemove = null;
@@ -452,24 +445,6 @@ public class Library {
                 System.out.println("Member removed successfully!");
             } else {
                 System.out.println("Member not found with the provided ID.");
-            }
-        }
-
-
-        public void listMembers() {
-            if (members.isEmpty()){
-                System.out.println("No members are registered yet!");
-            }
-            else {
-                System.out.println("List of registered members:");
-                for (Member member : members) {
-                    System.out.println("==============================");
-                    System.out.println("Name: " + member.getName());
-                    System.out.println("Age: " + member.getAge());
-                    System.out.println("Phone Number: " + member.getPhoneNumber());
-                    System.out.println("Member ID: " + member.getMemberID());
-                    System.out.println("==============================");
-                }
             }
         }
 
@@ -524,16 +499,15 @@ public class Library {
             while (true) {
                 try {
                     bookIDToReturn = scan.nextInt();
-                    break; // Exit the loop if input is valid
+                    break; 
                 } catch (InputMismatchException e) {
                     System.out.println("Invalid input. Please enter a valid integer for Book ID.");
-                    scan.next(); // Clear the invalid input
+                    scan.next(); 
                 }
             }
             for (Book book : borrowedBooksByMember.get(memberID)) {
                 if (book.getBookID() == bookIDToReturn) {
                     book.incrementAvailableCopies();
-                    // Assuming you have a condition to check if a book should be added back
                     if (shouldAddBookBack(book)) {
                         books.add(book);
                     }
@@ -546,14 +520,13 @@ public class Library {
         }
 
         private boolean shouldAddBookBack(Book returnedBook) {
-            // Check if the book is already in the books list
             for (Book book : books) {
                 if (book.getBookID() == returnedBook.getBookID()) {
-                    return false; // Book is already in the list, don't add it back
+                    return false; 
                 }
             }
             returnedBook.setAvailableCopies(1);
-            return true; // Book is not in the list, add it back
+            return true; 
         }
 
         public void displayMembersWithBooksAndFines() {
@@ -569,7 +542,6 @@ public class Library {
                     System.out.println("Member Name: " + (member.getName()));
                     System.out.println("Member Phone Number: " + (member.getPhoneNumber()));
 
-                    // Display books borrowed by the member
                     System.out.println("Books Borrowed:");
                     List<Book> borrowedBooks = borrowedBooksByMember.get(member.getMemberID());
                     if (borrowedBooks != null) {
@@ -579,7 +551,7 @@ public class Library {
                             System.out.println("  Title: " + (book.getTitle() != null ? book.getTitle() : "None"));
                         }
                     } else {
-                        System.out.println("  None"); // No borrowed books
+                        System.out.println("  None"); 
                     }
 
                     System.out.println("Fine to be Paid: Rs." + (fine != null ? fine : "0"));
@@ -587,7 +559,7 @@ public class Library {
                 }
             }
         }
-        
+
         public void printIssuedBooksByMember(int memberID) {
             if (!borrowedBooksByMember.containsKey(memberID)) {
                 System.out.println("No books borrowed by this member.");
@@ -610,27 +582,23 @@ public class Library {
                 System.out.println("==============================");
             }
         }
-
-
-
-
-        // Other methods to add and remove members/books
-        // Methods to issue, return books and calculate fines
+        public boolean presence(int memberID){
+            return (borrowedBooksByMember.containsKey(memberID));
+        }
     }
 
     static class Member {
-        // Member class definition remains unchanged
         private String name;
         private int age;
         private long phoneNumber;
         private int memberID;
         private int fine;
 
-        private static int nextMemberID = 1; // Static variable to keep track of member IDs
+        private static int nextMemberID = 1; 
 
         private ArrayList<Book> borrowed_books = new ArrayList<Book>();
 
-        private static Set<Integer> availableMemberIDs = new HashSet<>(); // Set to store available member IDs
+        private static Set<Integer> availableMemberIDs = new HashSet<>();
 
         public Member(String name, int age, long phoneNumber) {
             this.name = name;
@@ -657,7 +625,6 @@ public class Library {
         public void payFine() {
             fine = 0;
         }
-
 
         public static void markMemberIDAvailable(int memberID) {
             availableMemberIDs.add(memberID);
@@ -697,7 +664,7 @@ public class Library {
         public int getBookID() {
             return bookID;
         }
-        public String getTitle() { //getter
+        public String getTitle() {
             return title;
         }
         public String getAuthor() {
@@ -720,7 +687,5 @@ public class Library {
         public void setAvailableCopies(int availableCopies) {
             this.availableCopies = availableCopies;
         }
-
-        // Other methods and getters/setters
     }
 }
