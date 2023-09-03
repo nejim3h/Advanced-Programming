@@ -3,8 +3,9 @@ package org.example;
 import java.util.*;
 
 public class Library {
-    private static Member member;
-    private ArrayList<Member> members;
+
+    public Library() {
+    }
 
     public static void main(String[] args) {
         System.out.println("Library Portal Initialized…");
@@ -17,7 +18,7 @@ public class Library {
         int response;
         String mem_name;
         long Ph_No;
-        long T1 = 0; long T2 = 0; int fees = 0;
+        long T1 = 0; long T2; int fees = 0;
         Librarian librarian = new Librarian();
 
         while (true) {
@@ -28,11 +29,10 @@ public class Library {
                 response = scan.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please try again.");
-                scan.next(); 
+                scan.next();
                 continue;
             }
             if (response == 1) {
-                modeSelection:
                 while (true) {
                     System.out.println("\nChoose your task by selecting the index:");
                     System.out.println(" 1. Add Book:");
@@ -46,7 +46,7 @@ public class Library {
                         response = scan.nextInt();
                     } catch (InputMismatchException e) {
                         System.out.println("Invalid input. Please try again.");
-                        scan.next(); 
+                        scan.next();
                         continue;
                     }
 
@@ -56,59 +56,59 @@ public class Library {
                         librarian.removeBook();
                     } else if (response == 3) {
                         librarian.addMember();
-                    }else if (response ==4){
+                    } else if (response == 4) {
+                        librarian.listMembers();
                         librarian.removeMember();
-                    }else if (response == 5) {
+                    } else if (response == 5) {
                         librarian.displayMembersWithBooksAndFines();
-                    }else if(response==6) {
+                    } else if (response == 6) {
                         librarian.listBooks();
-                    }else if (response == 7) {
+                    } else if (response == 7) {
                         break;
-                    }
-                    else{
+                    } else {
                         System.out.println("Enter a valid option!");
                     }
 
                 }
 
             } else if (response == 2) {
-                modeSelection:
                 while (true) {
                     System.out.println("\nLogin to View Options");
                     System.out.println("Press 'E' to go BACK or any other key to login.");
                     System.out.print("Your choice: ");
                     String choice = scan.next();
+                    scan.nextLine();
 
                     if (choice.equalsIgnoreCase("E")) {
                         System.out.println();
-                        break; 
+                        break;
                     }
 
                     System.out.print("Enter your Name: ");
-                    mem_name = scan.next();
-                    scan.nextLine(); 
+                    mem_name = scan.nextLine();
 
-                    if (!isAlpha(mem_name)) {
+                    if (isAlpha(mem_name)) {
                         System.out.println("Invalid name. Please enter alphabetic characters only.");
                         continue;
                     }
 
                     System.out.print("Enter your Phone Number: ");
-
+                    String num1;
                     try {
-                        Ph_No = scan.nextLong();
-                    } catch (java.util.InputMismatchException e) {
+                        num1 = scan.nextLine();
+                    } catch (InputMismatchException e) {
                         System.out.println("Invalid phone number. Please enter a valid number.");
-                        scan.nextLine(); 
-                        continue; 
+                        scan.nextLine();
+                        continue;
                     }
+                    Ph_No = Long.parseLong(num1);
 
                     if (Ph_No <= 1000000000 || Ph_No >= 9999999999L) {
                         System.out.println("Invalid phone number format. Please enter a 10-digit number.");
-                        continue; 
+                        continue;
                     }
 
-                    if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))) {
+                    if ((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))) {
                         int ind = librarian.member_name.indexOf(mem_name);
                         System.out.println("==============================");
                         System.out.println("Welcome " + mem_name + "!\nYour Member ID is : " + librarian.member_id.get(ind));
@@ -124,7 +124,7 @@ public class Library {
                                 response = scan.nextInt();
                             } catch (InputMismatchException e) {
                                 System.out.println("Invalid input. Please try again.");
-                                scan.next(); 
+                                scan.next();
                                 continue;
                             }
                             if (response == 1) {
@@ -140,10 +140,8 @@ public class Library {
                                 } else {
                                     System.out.println("Kindly pay the fine to proceed!");
                                 }
-                            }
-
-                            else if (response == 4) {
-                                int fine = 0; 
+                            } else if (response == 4) {
+                                int fine = 0;
 
                                 System.out.println("List of your borrowed books:");
                                 librarian.printIssuedBooksByMember(librarian.member_id.get(ind));
@@ -157,8 +155,6 @@ public class Library {
 
                                     if (timeDifference >= 10) {
                                         fine = 3 * (timeDifference - 10);
-                                    } else {
-                                        fine = 0;
                                     }
                                 }
 
@@ -167,7 +163,7 @@ public class Library {
                                 if (index_ >= 0) {
                                     if (index_ >= librarian.memberFines.size()) {
                                         while (index_ >= librarian.memberFines.size()) {
-                                            librarian.memberFines.add(0); 
+                                            librarian.memberFines.add(0);
                                         }
                                     }
                                     librarian.memberFines.set(index_, fine);
@@ -180,9 +176,7 @@ public class Library {
                                 } else {
                                     System.out.println("Ph_No " + Ph_No + " not found in member_ph.");
                                 }
-                            }
-                            
-                            else if (response == 5) {
+                            } else if (response == 5) {
                                 if (fees == 0) {
                                     System.out.println("You don't have any due fine!");
                                 } else {
@@ -198,18 +192,18 @@ public class Library {
                                     }
                                 }
 
-                        } else if (response == 6) {
-                                    break;
-                                } else {
-                                    System.out.println("Enter a valid option!");
-                                }
+                            } else if (response == 6) {
+                                break;
+                            } else {
+                                System.out.println("Enter a valid option!");
                             }
-
-                        } else {
-                            System.out.println("Member with Name: " + mem_name + " and Phone No: " + Ph_No + " doesn't exist.");
-                            System.out.println("Complete Registration to login\n");
-                            break;
                         }
+
+                    } else {
+                        System.out.println("Member with Name: " + mem_name + " and Phone No: " + Ph_No + " doesn't exist.");
+                        System.out.println("Complete Registration to login\n");
+                        break;
+                    }
 
                 }
             } else if (response == 3) {
@@ -224,36 +218,22 @@ public class Library {
         }
     }
 
-    public static void setMember(Member member) {
-        Library.member = member;
-    }
-
-    public static int FEES(long T1, long T2){
-        int fees;
-        if (Math.abs(T1-T2)>=10) {
-            fees = 3 * Math.abs(((int) (Math.abs(T1 - T2)) - 10));
-        }
-        else{
-            fees = 0;
-        }
-        return fees;
-    }
     public static boolean isAlpha(String str) {
-        return str != null && str.replaceAll(" ", "").chars().allMatch(Character::isLetter);
+        return str == null || !str.replaceAll(" ", "").chars().allMatch(Character::isLetter);
     }
 
 
     static class Librarian {
 
-        private ArrayList<Member> members = new ArrayList<Member>();
-        private ArrayList<Book> books = new ArrayList<Book>();
-        private ArrayList<String> member_name = new ArrayList<String>();
-        private ArrayList<Long> member_ph = new ArrayList<Long>();
-        private ArrayList<Integer> member_id = new ArrayList<>();
-        private ArrayList<Book> issuedBooks = new ArrayList<>();
-        private ArrayList<Book> returnedBooks = new ArrayList<>();
-        private ArrayList<Integer> memberFines = new ArrayList<>();
-        private HashMap<Integer, ArrayList<Book>> borrowedBooksByMember = new HashMap<>();
+        private final ArrayList<Member> members = new ArrayList<>();
+        private final ArrayList<Book> books = new ArrayList<>();
+        private final ArrayList<String> member_name = new ArrayList<>();
+        private final ArrayList<Long> member_ph = new ArrayList<>();
+        private final ArrayList<Integer> member_id = new ArrayList<>();
+        private final ArrayList<Integer> memberFines = new ArrayList<>();
+        private final HashMap<Integer, ArrayList<Book>> borrowedBooksByMember = new HashMap<>();
+        private int bookIDCounter = 1; // Initialize a counter for generating book IDs
+        private final Set<Integer> assignedBookIDs = new HashSet<>();
 
         public void addBook() {
             Scanner scan = new Scanner(System.in);
@@ -261,39 +241,23 @@ public class Library {
 
             int bookID;
             while (true) {
-                try {
-                    System.out.print("Assign Book ID (Integer Number): ");
-                    bookID = scan.nextInt();
-                    if (bookID <= 0) {
-                        System.out.println("Please enter a positive integer for Book ID.");
-                        continue;
-                    }
-                    break; 
-                } catch (InputMismatchException e) {
-                    System.out.println("Invalid input. Please enter a valid integer for Book ID.");
-                    scan.next();
-                }
-            }
-            for (Book existingBook : books) {
-                if (existingBook.getBookID() == bookID) {
-                    System.out.println("A book with the same Book ID already exists.");
-                    return;
+                // Generate a new book ID and check if it's already assigned
+                bookID = bookIDCounter++;
+                if (!assignedBookIDs.contains(bookID)) {
+                    assignedBookIDs.add(bookID); // Mark the book ID as assigned
+                    break; // Exit the loop when a unique book ID is found
                 }
             }
 
-            scan.nextLine();
+            System.out.println("Assigned Book ID: " + bookID);
+
 
             System.out.print("Title: ");
-            String title = scan.nextLine(); 
+            String title = scan.nextLine();
 
             System.out.print("Author: ");
             String author = scan.nextLine();
-            if (!isAlpha(author)){
-                System.out.println("Enter a valid name");
-                System.out.print("Author: ");
-                author = scan.nextLine();
-            }
-
+            // Input validation for totalCopies
             int totalCopies;
             while (true) {
                 try {
@@ -303,16 +267,18 @@ public class Library {
                         System.out.println("Please enter a positive integer for Total Copies.");
                         continue;
                     }
-                    break; 
+                    break;
                 } catch (InputMismatchException e) {
                     System.out.println("Invalid input. Please enter a valid integer for Total Copies.");
-                    scan.next(); 
+                    scan.next();
                 }
             }
-            Book newBook = new Book(bookID, title, author, totalCopies, totalCopies);
+
+            Book newBook = new Book(bookID, title, author, totalCopies);
             books.add(newBook);
             System.out.println("Book added successfully!");
         }
+
 
         public void removeBook() {
             Scanner scan = new Scanner(System.in);
@@ -357,18 +323,14 @@ public class Library {
                 }
             }
         }
-        
+
         public void addMember() {
             Scanner scan = new Scanner(System.in);
             System.out.println("Enter Details:");
 
             try {
                 System.out.print("Name: ");
-                String name = scan.nextLine(); 
-
-                if (!name.matches("^[a-zA-Z\\s]+$")) {
-                    throw new IllegalArgumentException("Enter a valid name");
-                }
+                String name = scan.nextLine();
 
                 int age;
                 while (true) {
@@ -376,13 +338,13 @@ public class Library {
                     if (scan.hasNextInt()) {
                         age = scan.nextInt();
                         if (age > 0) {
-                            break; 
+                            break;
                         } else {
                             System.out.println("Age should be a positive number.");
                         }
                     } else {
                         System.out.println("Age should be a numeric value.");
-                        scan.next(); 
+                        scan.next();
                     }
                 }
 
@@ -392,17 +354,17 @@ public class Library {
                     if (scan.hasNextLong()) {
                         phoneNumber = scan.nextLong();
                         if (phoneNumber > 1000000000 && phoneNumber < 9999999999L) {
-                            break; 
+                            break;
                         } else {
                             System.out.println("Enter a 10 digit phone number.");
                         }
                     } else {
                         System.out.println("Phone number should be a numeric value.");
-                        scan.next(); 
+                        scan.next();
                     }
                 }
 
-                Member newMember = new Member(name, age, phoneNumber);
+                Member newMember = new Member(name, phoneNumber, age);
                 members.add(newMember);
                 System.out.println("Member Successfully Registered with Member ID: " + newMember.getMemberID());
                 member_id.add(newMember.getMemberID());
@@ -423,12 +385,12 @@ public class Library {
                 if (scan.hasNextInt()) {
                     memberIDToRemove = scan.nextInt();
                     if (memberIDToRemove > 0) {
-                        break; 
+                        break;
                     }
                 }
 
                 System.out.println("Invalid input. Please enter a valid positive Member ID.");
-                scan.nextLine(); 
+                scan.nextLine();
             }
 
             Member memberToRemove = null;
@@ -499,10 +461,10 @@ public class Library {
             while (true) {
                 try {
                     bookIDToReturn = scan.nextInt();
-                    break; 
+                    break;
                 } catch (InputMismatchException e) {
                     System.out.println("Invalid input. Please enter a valid integer for Book ID.");
-                    scan.next(); 
+                    scan.next();
                 }
             }
             for (Book book : borrowedBooksByMember.get(memberID)) {
@@ -519,14 +481,31 @@ public class Library {
             System.out.println("Book not found in the member's borrowed books.");
         }
 
+        public void listMembers() {
+            if (members.isEmpty()){
+                System.out.println("No members are registered yet!");
+            }
+            else {
+                System.out.println("List of registered members:");
+                for (Member member : members) {
+                    System.out.println("==============================");
+                    System.out.println("Name: " + member.getName());
+                    System.out.println("Age: " + member.getAge());
+                    System.out.println("Phone Number: " + member.getPhoneNumber());
+                    System.out.println("Member ID: " + member.getMemberID());
+                    System.out.println("==============================");
+                }
+            }
+        }
+
         private boolean shouldAddBookBack(Book returnedBook) {
             for (Book book : books) {
                 if (book.getBookID() == returnedBook.getBookID()) {
-                    return false; 
+                    return false;
                 }
             }
             returnedBook.setAvailableCopies(1);
-            return true; 
+            return true;
         }
 
         public void displayMembersWithBooksAndFines() {
@@ -551,7 +530,7 @@ public class Library {
                             System.out.println("  Title: " + (book.getTitle() != null ? book.getTitle() : "None"));
                         }
                     } else {
-                        System.out.println("  None"); 
+                        System.out.println("  None");
                     }
 
                     System.out.println("Fine to be Paid: Rs." + (fine != null ? fine : "0"));
@@ -588,23 +567,20 @@ public class Library {
     }
 
     static class Member {
-        private String name;
-        private int age;
-        private long phoneNumber;
-        private int memberID;
-        private int fine;
+        private final String name;
+        private final long phoneNumber;
+        private final int memberID;
 
-        private static int nextMemberID = 1; 
+        private final int age;
 
-        private ArrayList<Book> borrowed_books = new ArrayList<Book>();
+        private static int nextMemberID = 1;
 
-        private static Set<Integer> availableMemberIDs = new HashSet<>();
+        private static final Set<Integer> availableMemberIDs = new HashSet<>();
 
-        public Member(String name, int age, long phoneNumber) {
+        public Member(String name, long phoneNumber, int age) {
             this.name = name;
-            this.age = age;
             this.phoneNumber = phoneNumber;
-            this.fine = 0;
+            this.age = age;
 
             if (availableMemberIDs.isEmpty()) {
                 memberID = nextMemberID++;
@@ -612,18 +588,6 @@ public class Library {
                 memberID = availableMemberIDs.iterator().next();
                 availableMemberIDs.remove(memberID);
             }
-        }
-
-        public void borrowBook(Book book) {
-            borrowed_books.add(book);
-        }
-
-        public void returnBook(Book book) {
-            borrowed_books.remove(book);
-        }
-
-        public void payFine() {
-            fine = 0;
         }
 
         public static void markMemberIDAvailable(int memberID) {
@@ -635,29 +599,27 @@ public class Library {
         public String getName(){
             return name;
         }
-        public int getAge(){
-            return age;
-        }
+
         public long getPhoneNumber(){
             return phoneNumber;
         }
-        public int getFine(){
-            return fine;
+
+        public int getAge() {
+            return age;
         }
+
     }
 
     static class Book {
-        private int bookID;
-        private String title;
-        private String author;
-        private int totalCopies;
+        private final int bookID;
+        private final String title;
+        private final String author;
         private int availableCopies;
 
-        public Book(int bookID, String title, String author, int totalCopies, int availableCopies) {
+        public Book(int bookID, String title, String author, int availableCopies) {
             this.bookID = bookID;
             this.title = title;
             this.author = author;
-            this.totalCopies = totalCopies;
             this.availableCopies = availableCopies;
         }
 
@@ -670,15 +632,12 @@ public class Library {
         public String getAuthor() {
             return author;
         }
-        public int incrementedAvailableCopies() {
-            return availableCopies++;
-        }
 
-        public int decrementAvailableCopies() {
-            return availableCopies--;
+        public void decrementAvailableCopies() {
+            availableCopies--;
         }
-        public int incrementAvailableCopies(){
-            return availableCopies++;
+        public void incrementAvailableCopies(){
+            availableCopies++;
         }
 
         public int getAvailableCopies() {
