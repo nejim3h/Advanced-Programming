@@ -74,7 +74,14 @@ public class Library {
                 modeSelection:
                 while (true) {
                     System.out.println("\nLogin to View Options");
-                    System.out.println("______________________________");
+                    System.out.println("Press 'E' to go BACK or any other key to login.");
+                    System.out.print("Your choice: ");
+                    String choice = scan.next();
+
+                    if (choice.equalsIgnoreCase("E")) {
+                        System.out.println();
+                        break; // Exit the loop and end the program
+                    }
 
                     // Prompt the user for name
                     System.out.print("Enter your Name: ");
@@ -348,10 +355,10 @@ public class Library {
                     System.out.print("Phone Number: ");
                     if (scan.hasNextLong()) {
                         phoneNumber = scan.nextLong();
-                        if (phoneNumber > 0) {
+                        if (phoneNumber > 1000000000 && phoneNumber < 9999999999L) {
                             break; // Valid phone number, exit the loop
                         } else {
-                            System.out.println("Phone number should be a positive number.");
+                            System.out.println("Enter a 10 digit phone number.");
                         }
                     } else {
                         System.out.println("Phone number should be a numeric value.");
