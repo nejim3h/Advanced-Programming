@@ -75,11 +75,36 @@ public class Library {
                 while (true) {
                     System.out.println("\nLogin to View Options");
                     System.out.println("______________________________");
+
+                    // Prompt the user for name
                     System.out.print("Enter your Name: ");
                     mem_name = scan.next();
+                    scan.nextLine(); // Consume the newline character
+
+                    // Validate the name input
+                    if (!isAlpha(mem_name)) {
+                        System.out.println("Invalid name. Please enter alphabetic characters only.");
+                        continue; // Restart the loop
+                    }
+
+                    // Prompt the user for phone number
                     System.out.print("Enter your Phone Number: ");
-                    Ph_No = scan.nextLong();
-                    System.out.println();
+
+                    // Handle potential input errors for the phone number
+                    try {
+                        Ph_No = scan.nextLong();
+                    } catch (java.util.InputMismatchException e) {
+                        System.out.println("Invalid phone number. Please enter a valid number.");
+                        scan.nextLine(); // Clear the scanner buffer to avoid an infinite loop
+                        continue; // Restart the loop
+                    }
+
+                    // You can also add additional validation for the phone number, if needed
+                    if (Ph_No < 1000000000 || Ph_No > 9999999999L) {
+                        System.out.println("Invalid phone number format. Please enter a 10-digit number.");
+                        continue; // Restart the loop
+                    }
+
                     if((librarian.member_name.contains(mem_name)) && (librarian.member_ph.contains(Ph_No))){
                         int ind = librarian.member_name.indexOf(mem_name);
                         System.out.println("==============================");
@@ -219,6 +244,11 @@ public class Library {
 
             System.out.print("Author: ");
             String author = scan.nextLine();
+            if (!isAlpha(author)){
+                System.out.println("Enter a valid name");
+                System.out.print("Author: ");
+                author = scan.nextLine();
+            }
 
             int totalCopies;
             while (true) {
