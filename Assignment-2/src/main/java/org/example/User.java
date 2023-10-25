@@ -1,3 +1,5 @@
+package org.example;
+
 public abstract class User {
     protected String name;
     protected int age;
@@ -29,3 +31,4 @@ public abstract class User {
     public abstract void register();
     public abstract boolean login(String enteredUsername, String enteredPassword);
 }
+

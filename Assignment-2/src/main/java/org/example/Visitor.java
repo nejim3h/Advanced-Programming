@@ -1,3 +1,5 @@
+package org.example;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -53,8 +55,14 @@ public class Visitor extends User {
         // implementation
     }
 
-    public void applyDiscount() {
-        // implementation
+    public void printSpecialDeals() {
+        Deal deal = new Deal();
+        deal.printDeals();
+    }
+
+    public void viewDiscount() {
+        Discount discount = new Discount();
+        discount.printDiscountsList();
     }
 
     public void exploreZoo() {
@@ -74,7 +82,7 @@ public class Visitor extends User {
                 animal.printAnimals();
             } else if (choice == 3) {
                 System.out.println("Exiting...");
-                
+
             } else {
                 System.out.println("Invalid choice.");
             }
@@ -163,7 +171,7 @@ public class Visitor extends User {
     public void setBalance(double price){
         this.balance = price;
     }
-    
+
     public Object getEmail() {
         return null;
     }
@@ -185,3 +193,4 @@ public class Visitor extends User {
         return this.balance;
     }
 }
+

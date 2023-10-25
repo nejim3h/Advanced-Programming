@@ -1,3 +1,5 @@
+package org.example;
+
 import java.util.Scanner;
 
 public class Admin extends User {
@@ -111,7 +113,27 @@ public class Admin extends User {
     }
 
     public void setSpecialDeals() {
-        // implementation
+        Deal deal = new Deal();
+        int dealChoice=0;
+        while(dealChoice!=3){
+            System.out.println("Set Special Deals:");
+            System.out.println("1. Add Special Deal");
+            System.out.println("2. Remove Special Deal");
+            System.out.println("3. Exit");
+            dealChoice = scanner.nextInt();
+            scanner.nextLine();
+            if (dealChoice == 1){
+                deal.addDeal();
+            }else if (dealChoice == 2) {
+                deal.removeDeal();
+            }else if (dealChoice == 3){
+                System.out.println("Exiting...");
+                break;
+            }else {
+                System.out.println("Invalid choice.");
+                break;
+            }
+        }
     }
 
     public void viewVisitorStats() {
