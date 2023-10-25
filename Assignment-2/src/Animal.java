@@ -92,6 +92,13 @@ public class Animal {
         }
     }
 
+    void printAnimals() {
+        System.out.println("List of all animals:");
+        for (Animal animal : animalsList) {
+            System.out.println(animal.toString());
+        }
+    }
+
     public int getID() {
         return this.id;
     }
@@ -106,5 +113,9 @@ public class Animal {
 
     public List<Animal> getAnimalsList() {
         return animalsList;
+    }
+    @Override
+    public String toString() {
+        return "ID: " + this.getID() + ", Name: " + this.getName() + ", Type: " + this.getType();
     }
 }
