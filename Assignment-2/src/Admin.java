@@ -13,11 +13,11 @@ public class Admin extends User {
     }
 
     public final String getUsername() {
-        return "admin123";
+        return "admin";
     }
 
     public final String getPassword() {
-        return "admin";
+        return "admin123";
     }
 
     public void manageAttractions() {
@@ -84,7 +84,30 @@ public class Admin extends User {
     }
 
     public void setDiscounts() {
-        // implementation
+        Discount discount = new Discount();
+        int discountChoice=0;
+        while(discountChoice!=4){
+            System.out.println("Set Discounts:");
+            System.out.println("1. Add Discount");
+            System.out.println("2. Modify Discount");
+            System.out.println("3. Remove Discount");
+            System.out.println("4. Exit");
+            discountChoice = scanner.nextInt();
+            scanner.nextLine();
+            if (discountChoice == 1){
+                discount.addDiscount();
+            }else if (discountChoice == 2) {
+                discount.modifyDiscount();
+            }else if (discountChoice == 3) {
+                discount.removeDiscount();
+            }else if (discountChoice == 4){
+                System.out.println("Exiting...");
+                break;
+            }else {
+                System.out.println("Invalid choice.");
+                break;
+            }
+        }
     }
 
     public void setSpecialDeals() {
@@ -95,8 +118,9 @@ public class Admin extends User {
         // implementation
     }
 
-    public void viewFeedback() {
-        // implementation
+    public void displayFeedback() {
+        Feedback feedback = new Feedback();
+        feedback.viewFeedback();
     }
 
     @Override
