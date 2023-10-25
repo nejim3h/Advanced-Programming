@@ -1,10 +1,10 @@
 public abstract class User {
-    private String name;
-    private int age;
-    private String phoneNumber;
-    private String email;
-    private String username;
-    private String password;
+    protected String name;
+    protected int age;
+    protected String phoneNumber;
+    protected String email;
+    protected String username;
+    protected String password;
 
     public User(String name, int age, String phoneNumber, String email, String username, String password) {
         this.name = name;
@@ -14,11 +14,18 @@ public abstract class User {
         this.username = username;
         this.password = password;
     }
+    public User() {
+        this.name = "";
+        this.age = 0;
+        this.phoneNumber = "";
+        this.email = "";
+        this.username = "";
+        this.password = "";
+    }
 
     public User(String name2, int age2, String phoneNumber2, String email2) {
     }
 
     public abstract void register();
-
     public abstract boolean login(String enteredUsername, String enteredPassword);
 }
