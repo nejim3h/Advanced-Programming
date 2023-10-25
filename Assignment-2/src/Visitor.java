@@ -20,7 +20,33 @@ public class Visitor extends User {
     }
 
     public void buyMembership() {
-        // implementation
+        System.out.println(getBalance());
+        System.out.println("Buy Membership :");
+        System.out.println("1. Basic Membership (Rs. 20)");
+        System.out.println("2. Buy Premium Membership (Rs. 80)");
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        if ((choice == 1)&&(getMembershipType().equals(""))) {
+            if (this.balance >= 20) {
+                this.balance -= 20;
+                this.membershipType = "Basic";
+                System.out.println("Basic Membership bought successfully.");
+            } else {
+                System.out.println("Insufficient balance.");
+            }
+        }
+        else if ((choice == 2)&&(!(getMembershipType().equals("Premium")))) {
+            if (this.balance >= 80) {
+                this.balance -= 80;
+                this.membershipType = "Premium";
+                System.out.println("Premium Membership bought successfully.");
+            } else {
+                System.out.println("Insufficient balance.");
+            }
+        } else {
+            System.out.println("Invalid choice / You are already a "+getMembershipType() + "member");  //assumption
+        }
     }
 
     public void buyTicket() {
@@ -31,31 +57,44 @@ public class Visitor extends User {
         // implementation
     }
 
-    public void visitAnimal() {
-        // implementation
-    }
-
-    public void visitAttraction() {
-        // implementation
+    public void exploreZoo() {
+        int choice = 0;
+        while(choice!=3){
+            System.out.println("1. View Attractions");
+            System.out.println("2. View Animals");
+            System.out.println("3. Exit");
+            Scanner scanner = new Scanner(System.in);
+            choice = scanner.nextInt();
+            scanner.nextLine();
+            if (choice == 1) {
+                Attraction attraction = new Attraction();
+                attraction.printAllAttraction();
+            } else if (choice == 2) {
+                Animal animal = new Animal();
+                animal.printAnimals();
+            } else if (choice == 3) {
+                System.out.println("Exiting...");
+                
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        }
     }
 
     public void visitEvent() {
         // implementation
     }
 
-    public void provideFeedback() {
-        // implementation
+    public void leaveFeedback() {
+        Feedback feedback = new Feedback(this, "");
+        feedback.addFeedback(this);
     }
 
     @Override
     public void register() {
         Scanner scanner = new Scanner(System.in);
-
-        // Get visitor's name
         System.out.print("Enter Name: ");
         String name = scanner.nextLine();
-
-        // Get visitor's age
         System.out.print("Enter Age: ");
         int age = 0;
         boolean isAgeValid = false;
@@ -72,24 +111,14 @@ public class Visitor extends User {
                 scanner.nextLine();
             }
         }
-
-        // Get visitor's phone number
         System.out.print("Enter Phone Number: ");
         String phone = scanner.nextLine();
-
-        // Get visitor's email
         System.out.print("Enter Email: ");
         String email = scanner.nextLine();
-
-        // Get visitor's username
         System.out.print("Enter Username: ");
         String username = scanner.nextLine();
-
-                // Get visitor's password
         System.out.print("Enter Password: ");
         String password = scanner.nextLine();
-
-        // Get visitor's wallet balance
         System.out.print("Enter Wallet Balance: ");
         double balance = 0;
         boolean isBalanceValid = false;
@@ -97,6 +126,7 @@ public class Visitor extends User {
             try {
                 balance = scanner.nextDouble();
                 scanner.nextLine();
+                setBalance(balance);
                 if (balance < 0) {
                     throw new IllegalArgumentException("Balance cannot be negative.");
                 }
@@ -106,11 +136,7 @@ public class Visitor extends User {
                 scanner.nextLine();
             }
         }
-
-        // Get visitor's membership type
-        String membershipType = "basic";
-
-        // Create a new Visitor object with the user-provided values
+        String membershipType = "";
         Visitor newVisitor = new Visitor(name, age, phone, email, username, password, balance, membershipType);
         accounts.put(email, password); //ADD email,password to hashmap for login
         // Save the new Visitor object to the database
@@ -134,11 +160,28 @@ public class Visitor extends User {
         }
     }
 
+    public void setBalance(double price){
+        this.balance = price;
+    }
+    
     public Object getEmail() {
         return null;
     }
 
     public Object getPassword() {
         return null;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
+    }
+    public String getMembershipType() {
+        return this.membershipType;
+    }
+    private double getBalance() {
+        return this.balance;
     }
 }
