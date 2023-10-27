@@ -22,6 +22,8 @@ public class Ticket {
 
     }
 
+    private Discount appliedDiscount;
+
     public void purchase(List<Attraction> attractionsList, Visitor visitor) {
         Attraction.printAllAttraction();
         Scanner scanner = new Scanner(System.in);
@@ -54,12 +56,47 @@ public class Ticket {
         int numTickets = scanner.nextInt();
         scanner.nextLine();
 
-        double price = numTickets * selectedAttraction.getPrice();
+        double basePrice = numTickets * selectedAttraction.getPrice();
 
         if (numTickets <= 0 || numTickets > selectedAttraction.getCapacity()) {
             System.out.println("Invalid number of tickets or not enough capacity.");
-        } else if (visitor.getBalance() < price) { // Check the visitor's balance
+            return;
+        }
+
+        // Ask for a coupon code
+        System.out.print("Do you have a coupon code? (Yes/No): ");
+        String couponResponse = scanner.nextLine();
+
+        if (couponResponse.equalsIgnoreCase("Yes")) {
+            System.out.print("Enter your coupon code: ");
+            String couponCode = scanner.nextLine();
+
+            // Check if the coupon code is valid
+            for (Discount discount : Discount.getDiscountsList()) {
+                if (discount.getCode().equals(couponCode)) {
+                    appliedDiscount = discount;
+                    break;
+                }
+            }
+
+            if (appliedDiscount == null) {
+                System.out.println("Invalid coupon code. No discount applied.");
+            }
+        }
+
+        double price;
+
+        // Calculate the price with or without the discount
+        if (appliedDiscount != null) {
+            double discountPercentage = appliedDiscount.getPercentage();
+            price = basePrice - (basePrice * discountPercentage / 100);
+        } else {
+            price = basePrice;
+        }
+
+        if (visitor.getBalance() < price) {
             System.out.println("Not enough balance");
+            return;
         } else {
             for (int i = 0; i < numTickets; i++) {
                 Ticket ticket = new Ticket(selectedAttraction);
