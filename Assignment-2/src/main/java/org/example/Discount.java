@@ -8,15 +8,13 @@ public class Discount {
     private static int nextID = 1;
     private int id;
     private String code;
-    private String type;
-    private double amount;
-    private List<Discount> discountsList = new ArrayList<>();
+    private int percentage;
+    private static List<Discount> discountsList = new ArrayList<>();
 
-    public Discount(String code, String type, double amount) {
+    public Discount(String code, int percentage) {
         this.id = nextID++;
         this.code = code;
-        this.type = type;
-        this.amount = amount;
+        this.percentage = percentage;
     }
 
     public Discount() {
@@ -30,19 +28,12 @@ public class Discount {
             System.out.println("Discount code already exists. Please enter a different code:");
             code = scanner.nextLine();
         }
-        System.out.println("Enter Discount Type (Percentage or Amount):");
-        String type = scanner.nextLine();
-        while (!isValidType(type)) {
-            System.out.println("Invalid type. Please enter Percentage or Amount:");
-            type = scanner.nextLine();
-        }
-        System.out.println("Enter Discount Amount:");
-        double amount = scanner.nextDouble();
+        System.out.println("Enter Discount Percentage :");
+        Integer amount = scanner.nextInt();
         scanner.nextLine();
-        Discount newDiscount = new Discount(code, type, amount);
+        Discount newDiscount = new Discount(code, amount);
         discountsList.add(newDiscount);
         System.out.println("New discount added successfully.");
-        scanner.close();
     }
 
     public void modifyDiscount() {
@@ -63,18 +54,11 @@ public class Discount {
                 System.out.println("Discount code already exists. Please enter a different code:");
                 code = scanner.nextLine();
             }
-            System.out.println("Enter Discount Type (Percentage or Amount):");
-            String type = scanner.nextLine();
-            while (!isValidType(type)) {
-                System.out.println("Invalid type. Please enter Percentage or Amount:");
-                type = scanner.nextLine();
-            }
-            System.out.println("Enter Discount Amount:");
-            double amount = scanner.nextDouble();
+            System.out.println("Enter Discount percentage:");
+            Integer perc = scanner.nextInt();
             scanner.nextLine();
             discount.code = code;
-            discount.type = type;
-            discount.amount = amount;
+            discount.percentage = perc;
             System.out.println("Discount details updated successfully.");
         } finally {
             scanner.close();
@@ -98,10 +82,6 @@ public class Discount {
         } finally {
             scanner.close();
         }
-    }
-
-    private boolean isValidType(String type) {
-        return type.equals("Percentage") || type.equals("Amount");
     }
 
     private boolean isCodeExists(String code) {
@@ -137,20 +117,16 @@ public class Discount {
         return this.code;
     }
 
-    public String getType() {
-        return this.type;
+    public double getPercentage() {
+        return this.percentage;
     }
 
-    public double getAmount() {
-        return this.amount;
-    }
-
-    public List<Discount> getDiscountsList() {
+    public static List<Discount> getDiscountsList() {
         return discountsList;
     }
 
     @Override
     public String toString() {
-        return this.id + ": " + this.code + " (" + this.type + " - " + this.amount + ")";
+        return this.id + ": " + this.code + " ("+this.percentage + "% )";
     }
 }
