@@ -20,6 +20,7 @@ public class Visitor extends User {
         this.balance = 0;
         this.membershipType = "";
     }
+    private Discount appliedDiscount;
 
     public void buyMembership() {
         System.out.println(getBalance());
@@ -29,27 +30,61 @@ public class Visitor extends User {
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
         scanner.nextLine();
-        if ((choice == 1)&&(getMembershipType().equals(""))) {
-            if (this.balance >= 20) {
-                this.balance -= 20;
-                this.membershipType = "Basic";
-                System.out.println("Basic Membership bought successfully.");
-            } else {
-                System.out.println("Insufficient balance.");
-            }
+
+        double membershipPrice = 0;
+        String membershipTypeToBuy = "";
+
+        if (choice == 1 && getMembershipType().isEmpty()) {
+            membershipPrice = 20;
+            membershipTypeToBuy = "Basic";
+        } else if (choice == 2 && !getMembershipType().equals("Premium")) {
+            membershipPrice = 80;
+            membershipTypeToBuy = "Premium";
+        } else {
+            System.out.println("Invalid choice / You are already a " + getMembershipType() + " member");
+            return; // Exit the function if the choice is invalid or if the user already has the chosen membership type.
         }
-        else if ((choice == 2)&&(!(getMembershipType().equals("Premium")))) {
-            if (this.balance >= 80) {
-                this.balance -= 80;
-                this.membershipType = "Premium";
-                System.out.println("Premium Membership bought successfully.");
+
+        System.out.println("Do you have a discount coupon? (Yes/No)");
+        String hasCoupon = scanner.nextLine();
+
+        if (hasCoupon.equalsIgnoreCase("Yes")) {
+            System.out.println("Enter the discount code:");
+            String discountCode = scanner.nextLine();
+            for (Discount discount : Discount.getDiscountsList()) {
+                if (discount.getCode().equals(discountCode)) {
+                    appliedDiscount = discount;
+                    break;
+                }
+            }
+
+            if (appliedDiscount != null) {
+                double discountAmount = (membershipPrice * appliedDiscount.getPercentage()) / 100;
+                double finalPrice = membershipPrice - discountAmount;
+
+                if (finalPrice <= getBalance()) {
+                    this.balance -= finalPrice;
+                    this.membershipType = membershipTypeToBuy;
+                    System.out.println(membershipTypeToBuy + " Membership bought successfully with a " +
+                            appliedDiscount.getPercentage() + "% discount.");
+                } else {
+                    System.out.println("Insufficient balance after applying the discount.");
+                }
             } else {
-                System.out.println("Insufficient balance.");
+                System.out.println("Invalid discount code or the discount does not apply to the selected membership.");
             }
         } else {
-            System.out.println("Invalid choice / You are already a "+getMembershipType() + "member");  //assumption
+            // No discount applied, proceed with the regular purchase.
+            if (this.balance >= membershipPrice) {
+                this.balance -= membershipPrice;
+                this.membershipType = membershipTypeToBuy;
+                System.out.println(membershipTypeToBuy + " Membership bought successfully.");
+            } else {
+                System.out.println("Insufficient balance.");
+            }
         }
     }
+
 
     public int countTotalVisitors() {
         int totalVisitors = 0;
@@ -120,7 +155,7 @@ public class Visitor extends User {
         // implementation
     }
 
-    public void visitAnimals() {
+    public void visitAnimals() {           //Assumption
         if (getMembershipType() != "") {
             Animal.visitAnimal();
         } else {
@@ -159,6 +194,10 @@ public class Visitor extends User {
         String phone = scanner.nextLine();
         System.out.print("Enter Email: ");
         String email = scanner.nextLine();
+        if (accounts.containsKey(email)) {
+            System.out.println("Account with this email already exists. Please use a different email.");
+            return;
+        }
         System.out.print("Enter Username: ");
         String username = scanner.nextLine();
         System.out.print("Enter Password: ");
@@ -182,10 +221,8 @@ public class Visitor extends User {
         }
         String membershipType = "";
         Visitor newVisitor = new Visitor(name, age, phone, email, username, password, balance, membershipType);
-        accounts.put(email, password); //ADD email,password to hashmap for login
-        // Save the new Visitor object to the database
+        accounts.put(email, password);
         try {
-            // implementation to save the new Visitor object to the database
             System.out.println("Registration successful.");
         } catch (Exception e) {
             System.out.println("Registration failed. Please try again later.");
